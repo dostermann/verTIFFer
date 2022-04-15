@@ -1,6 +1,15 @@
+from bz2 import compress
 import sys
 import os
 from pdf2image import convert_from_path, convert_from_bytes
+from pdf2image.exceptions import (
+    PDFInfoNotInstalledError,
+    PDFPageCountError,
+    PDFSyntaxError,
+    PDFPopplerTimeoutError
+)
+import tempfile
+from PIL import Image
 
 # GUI imports
 import tkinter
@@ -30,9 +39,21 @@ class Vertiffer(ctk.CTk):
         self.button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
     def button_func(self):
-        pass
+        with tempfile.TemporaryDirectory() as path:
+            images = convert_from_bytes(open(r'test.pdf', 'rb').read(),
+                                        paths_only=True,
+                                        output_folder=path,
+                                        thread_count=4,
+                                        fmt='tiff',
+                                        dpi=300)
+            ord_imgs = []
+            for img in images:
+                ord_imgs.append(Image.open(img).convert('L'))
+            ord_imgs[0].save('test.tif', save_all = True,
+                             append_images = ord_imgs[1:],
+                             compression='tiff_adobe_deflate')
 
-    def on_closing(self, event=0):
+    def on_closing(self):
         self.destroy()
 
     def start(self):
