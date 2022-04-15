@@ -49,9 +49,13 @@ class Vertiffer(ctk.CTk):
             ord_imgs = []
             for img in images:
                 ord_imgs.append(Image.open(img).convert('L'))
-            ord_imgs[0].save('test.tif', save_all = True,
-                             append_images = ord_imgs[1:],
-                             compression='tiff_adobe_deflate')
+            if len(ord_imgs) == 1:
+                ord_imgs[0].save('test.tif', save_all = True,
+                                 compression='tiff_adobe_deflate')
+            else:
+                ord_imgs[0].save('test.tif', save_all = True,
+                                 append_images = ord_imgs[1:],
+                                 compression='tiff_adobe_deflate')
 
     def on_closing(self):
         self.destroy()
