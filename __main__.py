@@ -28,16 +28,38 @@ class Vertiffer(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("verTIFFer 0.1.0")
-        self.geometry(f"{Vertiffer.WIDTH}x{Vertiffer.HEIGHT}")
+        self.title('verTIFFer 0.1.0')
+        self.geometry(f'{Vertiffer.WIDTH}x{Vertiffer.HEIGHT}')
+        # self.minsize('256x128')
+
+        # Icons
+        folder_ico = tkinter.PhotoImage(file=r'./icons/folder.png')
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        self.button = ctk.CTkButton(master=self, text="verTIFF mich!",
-                       command=self.button_func)
-        self.button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+        self.run_bttn = ctk.CTkButton(master=self, text="verTIFF mich!",
+                                      command=self.run_bttn_func)
+        self.run_bttn.place(relx=0.5, rely=0.75, anchor=tkinter.CENTER)
 
-    def button_func(self):
+        self.src_bttn = ctk.CTkButton(master=self, width=48, height=48,
+                                      image=folder_ico,
+                                      text="Quelle",
+                                      command=self.src_bttn_func)
+        self.src_bttn.place(relx=0.5, rely=0.25, anchor=tkinter.W)
+
+        self.dst_bttn = ctk.CTkButton(master=self, width=48, height=48,
+                                      image=folder_ico,
+                                      text="Ziel",
+                                      command=self.dst_bttn_func)
+        self.dst_bttn.place(relx=0.5, rely=0.5, anchor=tkinter.W)
+
+    def src_bttn_func(self):
+        pass
+
+    def dst_bttn_func(self):
+        pass
+
+    def run_bttn_func(self):
         with tempfile.TemporaryDirectory() as path:
             images = convert_from_bytes(open(r'test.pdf', 'rb').read(),
                                         paths_only=True,
