@@ -30,7 +30,7 @@ class Vertiffer(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title('verTIFFer 0.1.0')
+        self.title('verTIFFer 0.9.0')
         self.geometry(f'{Vertiffer.WIDTH}x{Vertiffer.HEIGHT}')
         # self.minsize('256x128')
 
