@@ -1,5 +1,6 @@
 import sys
 import os
+from tkinter import END, filedialog
 from pdf2image import convert_from_path, convert_from_bytes
 from pdf2image.exceptions import (
     PDFInfoNotInstalledError,
@@ -35,29 +36,47 @@ class Vertiffer(ctk.CTk):
         # Icons
         folder_ico = tkinter.PhotoImage(file=r'./icons/folder.png')
 
+        # needed variables at startup
+        self.src_folder = ''
+        self.dst_folder = ''
+
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.run_bttn = ctk.CTkButton(master=self, text="verTIFF mich!",
                                       command=self.run_bttn_func)
         self.run_bttn.place(relx=0.5, rely=0.75, anchor=tkinter.CENTER)
 
+        self.src_label = ctk.CTkEntry(master=self, placeholder_text=self.src_folder,
+                                      state='disabled', width=350)
+        self.src_label.place(relx=0.37, rely=0.25, anchor=tkinter.CENTER)
         self.src_bttn = ctk.CTkButton(master=self, width=48, height=48,
                                       image=folder_ico,
                                       text="Quelle",
                                       command=self.src_bttn_func)
-        self.src_bttn.place(relx=0.5, rely=0.25, anchor=tkinter.W)
+        self.src_bttn.place(relx=0.75, rely=0.25, anchor=tkinter.W)
 
+        self.dst_label = ctk.CTkEntry(master=self, placeholder_text=self.dst_folder,
+                                      state='disabled', width=350)
+        self.dst_label.place(relx=0.37, rely=0.5, anchor=tkinter.CENTER)
         self.dst_bttn = ctk.CTkButton(master=self, width=48, height=48,
                                       image=folder_ico,
                                       text="Ziel",
                                       command=self.dst_bttn_func)
-        self.dst_bttn.place(relx=0.5, rely=0.5, anchor=tkinter.W)
+        self.dst_bttn.place(relx=0.75, rely=0.5, anchor=tkinter.W)
 
     def src_bttn_func(self):
-        pass
+        self.src_folder = filedialog.askdirectory(title='Quellverzeichnis wählen')
+        self.src_label['state'] = 'normal'
+        self.src_label.delete(0, END)
+        self.src_label.insert(0, self.src_folder)
+        self.src_label['state'] = 'readonly'
 
     def dst_bttn_func(self):
-        pass
+        self.dst_folder = filedialog.askdirectory(title='Zielverzeichnis wählen')
+        self.dst_label['state'] = 'normal'
+        self.dst_label.delete(0, END)
+        self.dst_label.insert(0, self.dst_folder)
+        self.dst_label['state'] = 'readonly'
 
     def run_bttn_func(self):
         with tempfile.TemporaryDirectory() as path:
