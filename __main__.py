@@ -1,6 +1,5 @@
 from os import path
 from glob import glob
-from posixpath import split, splitext
 from pdf2image import convert_from_bytes
 from pdf2image.exceptions import (
     PDFInfoNotInstalledError,
@@ -13,7 +12,7 @@ from PIL import Image
 
 # GUI imports
 import tkinter
-from tkinter import END, filedialog
+from tkinter import filedialog, END
 import customtkinter as ctk
 
 
@@ -84,9 +83,9 @@ class Vertiffer(ctk.CTk):
             return glob(path.join(dir,
                                   '*.{}'.format(ext)))
         for items in find_pdf(self.src_folder):
-            filename_w_ext = split(items)
+            filename_w_ext = path.split(items)
             print(filename_w_ext)
-            filename_wo_ext = splitext(filename_w_ext[1])
+            filename_wo_ext = path.splitext(filename_w_ext[1])
             print(filename_wo_ext)
             savefile = path.join(self.dst_folder, '{}{}'.format(filename_wo_ext[0], '.tif'))
             print('Savefile: ')
