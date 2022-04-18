@@ -1,7 +1,7 @@
-import sys
-import os
-from tkinter import END, filedialog
-from pdf2image import convert_from_path, convert_from_bytes
+from os import path
+from glob import glob
+from posixpath import split, splitext
+from pdf2image import convert_from_bytes
 from pdf2image.exceptions import (
     PDFInfoNotInstalledError,
     PDFPageCountError,
@@ -13,6 +13,7 @@ from PIL import Image
 
 # GUI imports
 import tkinter
+from tkinter import END, filedialog
 import customtkinter as ctk
 
 
@@ -79,23 +80,35 @@ class Vertiffer(ctk.CTk):
         self.dst_label['state'] = 'readonly'
 
     def run_bttn_func(self):
-        with tempfile.TemporaryDirectory() as path:
-            images = convert_from_bytes(open(r'test.pdf', 'rb').read(),
-                                        paths_only=True,
-                                        output_folder=path,
-                                        thread_count=4,
-                                        fmt='tiff',
-                                        dpi=300)
-            ord_imgs = []
-            for img in images:
-                ord_imgs.append(Image.open(img).convert('L'))
-            if len(ord_imgs) == 1:
-                ord_imgs[0].save('test.tif', save_all = True,
-                                 compression='tiff_adobe_deflate')
-            else:
-                ord_imgs[0].save('test.tif', save_all = True,
-                                 append_images = ord_imgs[1:],
-                                 compression='tiff_adobe_deflate')
+        def find_pdf(dir, ext='pdf'):
+            return glob(path.join(dir,
+                                  '*.{}'.format(ext)))
+        for items in find_pdf(self.src_folder):
+            filename_w_ext = split(items)
+            print(filename_w_ext)
+            filename_wo_ext = splitext(filename_w_ext[1])
+            print(filename_wo_ext)
+            savefile = path.join(self.dst_folder, '{}{}'.format(filename_wo_ext[0], '.tif'))
+            print('Savefile: ')
+            print(savefile)
+
+            with tempfile.TemporaryDirectory() as tmp_path:
+                images = convert_from_bytes(open(items, 'rb').read(),
+                                            paths_only=True,
+                                            output_folder=tmp_path,
+                                            thread_count=4,
+                                            fmt='tiff',
+                                            dpi=300)
+                ord_imgs = []
+                for img in images:
+                    ord_imgs.append(Image.open(img).convert('L'))
+                if len(ord_imgs) == 1:
+                    ord_imgs[0].save(savefile, save_all = True,
+                                    compression='tiff_adobe_deflate')
+                else:
+                    ord_imgs[0].save(savefile, save_all = True,
+                                    append_images = ord_imgs[1:],
+                                    compression='tiff_adobe_deflate')
 
     def on_closing(self):
         self.destroy()
