@@ -84,12 +84,8 @@ class Vertiffer(ctk.CTk):
                                   '*.{}'.format(ext)))
         for items in find_pdf(self.src_folder):
             filename_w_ext = path.split(items)
-            print(filename_w_ext)
             filename_wo_ext = path.splitext(filename_w_ext[1])
-            print(filename_wo_ext)
             savefile = path.join(self.dst_folder, '{}{}'.format(filename_wo_ext[0], '.tif'))
-            print('Savefile: ')
-            print(savefile)
 
             with tempfile.TemporaryDirectory() as tmp_path:
                 images = convert_from_bytes(open(items, 'rb').read(),
